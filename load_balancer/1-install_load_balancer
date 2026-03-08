@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+# 1-install_load_balancer
+# Install HAproxy, configure round-robin load balancing to web-01 and web-02
+
+# Update and install HAproxy
+sudo apt-get update -y
+sudo apt-get install -y haproxy
+
+# Enable HAproxy service
+sudo systemctl enable haproxy
+
+# Backup original config
+sudo cp /etc/haproxy/haproxy.cfg /etc/haproxy/haproxy.cfg.bak
+
+# Configure HAproxy
+sudo tee /etc/haproxy/haproxy.cfg > /dev/null <<EOF
+global
+    log /dev/log    local0
+    log /dev/log    local1 notice
+    daemon
+    maxconn 256
+
+defaults
+    log     global
+    mode    http
+    option  httplog
+    option  dontlognull
+    timeout connect 5000ms
+    timeout client  50000ms
+    timeout server  50000ms
+
+frontend http_front
+    bind *:80
+    default_backend http_back
+
+backend http_back
+    balance roundrobin
+    server web-01 172.20.0.11:80 check
+    server web-02 172.20.0.12:8081 check
+EOF
+
+# Restart HAproxy to apply changes
+sudo systemctl restart haproxy
+
+# Test the load balancer
+echo "Testing HAproxy load balancer:"
+curl -Is http://localhost | grep X-Served-By
+curl -Is http://localhost | grep X-Served-By
