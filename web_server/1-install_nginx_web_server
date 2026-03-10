@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
-# Install nginx and configure page
+# Install nginx and configure default page
 
+# Update package index and install nginx
 apt-get update -y
 apt-get install nginx -y
 
+# Overwrite default nginx page with Holberton content
 echo "Holberton School for the win!" > /var/www/html/index.html
 
+# Start nginx service (works without systemctl)
 service nginx start
