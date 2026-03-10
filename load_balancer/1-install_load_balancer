@@ -1,14 +1,11 @@
 #!/usr/bin/env bash
 # This script installs and configures HAproxy to distribute traffic to web-01 and web-02 using round-robin
 
-# Install HAproxy
 apt-get update -y
 apt-get install -y haproxy
 
-# Enable HAproxy init script management
 echo "ENABLED=1" > /etc/default/haproxy
 
-# Configure HAproxy
 cat > /etc/haproxy/haproxy.cfg << 'EOF'
 global
     log /dev/log local0
@@ -42,9 +39,8 @@ frontend http_front
 
 backend http_back
     balance roundrobin
-    server 7002-web-01 18.212.27.116:80 check
-    server 7002-web-02 WEB_02_IP:80 check
+    server 7002-web-01 44.201.158.142:80 check
+    server 7002-web-02 3.85.90.63:80 check
 EOF
 
-# Restart HAproxy to apply configuration
 service haproxy restart
