@@ -1,13 +1,10 @@
 #!/usr/bin/env bash
 # This script installs and configures HAproxy to distribute traffic to web-01 and web-02 using round-robin
-
 # Install HAproxy
 apt-get update -y
 apt-get install -y haproxy
-
 # Enable HAproxy init script management
 echo "ENABLED=1" > /etc/default/haproxy
-
 # Configure HAproxy
 cat > /etc/haproxy/haproxy.cfg << 'EOF'
 global
@@ -19,7 +16,6 @@ global
     user haproxy
     group haproxy
     daemon
-
 defaults
     log     global
     mode    http
@@ -35,16 +31,14 @@ defaults
     errorfile 502 /etc/haproxy/errors/502.http
     errorfile 503 /etc/haproxy/errors/503.http
     errorfile 504 /etc/haproxy/errors/504.http
-
 frontend http_front
     bind *:80
     default_backend http_back
-
 backend http_back
     balance roundrobin
-    server Nziza21-web-01 54.157.159.89:80 check
-    server Nziza21-web-02 54.236.44.50:80 check
+    server 7002-web-01 172.25.0.11:80 check
+    server 7002-web-02 172.25.0.12:80 check
 EOF
-
 # Restart HAproxy to apply configuration
 service haproxy restart
+
