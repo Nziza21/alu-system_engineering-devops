@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
 # you just have to restart apache
-sudo service apache2 restart
+service apache2 start
+echo "apache2 is running"
